@@ -1,0 +1,25 @@
+name: RDMA-SYS-CI
+on:
+  pull_request:
+    branches: [master]
+  schedule: [cron: "0 */24 * * *"]
+
+env:
+  CI_RUST_TOOLCHAIN: 1.50.0
+
+jobs:
+  soft-roce-env:
+    name: Env test for soft-roce and softiwarp
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          # Install libibverbs-dev as dependency automatically
+          sudo apt-get install -y librdmacm-dev
+      - uses: actions-rs/cargo@v1
+        with:
+          use-cross: true
+          command: build
+      - name: Setup tmate session
+        if: ${{ failure() }}
+        uses: mxschmitt/action-tmate@v3
