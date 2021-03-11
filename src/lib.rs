@@ -1,7 +1,4 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
+#![deny(warnings)]
+#![allow(non_snake_case, non_camel_case_types, non_upper_case_globals)]
+
+pub mod rdma;

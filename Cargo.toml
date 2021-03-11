@@ -9,5 +9,5 @@ edition = "2018"
 [dependencies]
 
 [build-dependencies]
-bindgen = "0.36"
+bindgen = "0.57"
 pkg-config = "0.3"
