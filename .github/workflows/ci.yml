@@ -19,7 +19,7 @@ jobs:
           sudo apt-get install -y librdmacm-dev
       - uses: actions-rs/cargo@v1
         with:
-          command: build
+          command: test
           args: --all
       - name: Setup tmate session
         if: ${{ failure() }}

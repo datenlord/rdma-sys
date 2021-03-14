@@ -1,7 +1,38 @@
+use bindgen::callbacks::ParseCallbacks;
+
 // TODO: check libclang-dev version, since Rust bindgen depends on it
 // const LIB_CLANG_DEV_VERSION: &str = "3.9";
 const LIB_IBVERBS_DEV_VERSION: &str = "1.8.28";
 const LIB_RDMACM_DEV_VERSION: &str = "1.2.28";
+
+#[derive(Debug)]
+struct BindGenCallback;
+
+impl ParseCallbacks for BindGenCallback {
+    fn item_name(&self, original_item_name: &str) -> Option<String> {
+        if original_item_name.starts_with("pthread_") {
+            Some(
+                original_item_name
+                    .replace("pthread_", "libc::pthread_")
+                    .to_string(),
+            )
+        } else if original_item_name.starts_with("sockaddr") {
+            Some(
+                original_item_name
+                    .replace("sockaddr", "libc::sockaddr")
+                    .to_string(),
+            )
+        } else if original_item_name.starts_with("timespec") {
+            Some(
+                original_item_name
+                    .replace("timespec", "libc::timespec")
+                    .to_string(),
+            )
+        } else {
+            None
+        }
+    }
+}
 
 fn main() {
     // assert!(pkg_config::find_library("libclang-dev").is_ok(), "libclang-dev NOT found");
@@ -26,16 +57,36 @@ fn main() {
         .probe("librdmacm")
         .expect(&format!(
             "please install librdmacm-dev {}",
-            LIB_RDMACM_DEV_VERSION
+            LIB_RDMACM_DEV_VERSION,
         ));
 
     let bindings = bindgen::Builder::default()
         .header("/usr/include/infiniband/verbs.h")
         .header("/usr/include/rdma/rdma_cma.h")
+        .header("/usr/include/rdma/rdma_verbs.h")
         .whitelist_function("ibv_.*")
         .whitelist_type("ibv_.*")
         .whitelist_function("rdma_.*")
         .whitelist_type("rdma_.*")
+        .whitelist_type("verbs_.*")
+        .whitelist_type("ib_uverbs_access_flags")
+        //.whitelist_type("verbs_devices_ops")
+        //.whitelist_var("verbs_provider_.*")
+        .blacklist_type("pthread_.*")
+        .blacklist_type("sockaddr.*")
+        .blacklist_type("timespec")
+        .blacklist_type("ibv_gid")
+        .blacklist_type("ibv_async_event")
+        .blacklist_type("ibv_wc")
+        .blacklist_type("ibv_global_route")
+        .blacklist_type("ibv_mw_bind_info")
+        .blacklist_type("ibv_send_wr")
+        .blacklist_type("ibv_flow_spec")
+        .blacklist_type("rdma_ib_addr")
+        .blacklist_type("rdma_addr")
+        .blacklist_type("ibv_ah_attr")
+        .blacklist_type("rdma_ud_param")
+        .blacklist_type("rdma_cm_event")
         // Following ENUM will used with bitwise-or
         // including flags, mask, caps, bits, fields, size
         .bitfield_enum("ibv_device_cap_flags")
@@ -54,12 +105,12 @@ fn main() {
         .bitfield_enum("ibv_xrcd_init_attr_mask")
         .bitfield_enum("ibv_rereg_mr_flags")
         .bitfield_enum("ibv_srq_attr_mask")
-        .bitfield_enum("ibv_srq_init_attr_mask")
+        .bitfield_enum("ibv_srq_init_attr_mask") // TODO: need to be bitfield?
         .bitfield_enum("ibv_wq_init_attr_mask")
         .bitfield_enum("ibv_wq_flags")
         .bitfield_enum("ibv_wq_attr_mask")
         .bitfield_enum("ibv_ind_table_init_attr_mask")
-        .bitfield_enum("ibv_qp_init_attr_mask")
+        .bitfield_enum("ibv_qp_init_attr_mask") // TODO: need to be bitfield?
         .bitfield_enum("ibv_qp_create_flags")
         .bitfield_enum("ibv_qp_create_send_ops_flags")
         .bitfield_enum("ibv_qp_open_attr_mask")
@@ -74,6 +125,9 @@ fn main() {
         .bitfield_enum("ibv_parent_domain_init_attr_mask")
         .bitfield_enum("ibv_read_counters_flags")
         .bitfield_enum("ibv_values_mask")
+        .bitfield_enum("ib_uverbs_access_flags")
+        .bitfield_enum("rdma_cm_join_mc_attr_mask")
+        .bitfield_enum("rdma_cm_mc_join_flags")
         // Following ENUM will be const in a sub-mod
         .constified_enum_module("ibv_node_type")
         .constified_enum_module("ibv_transport_type")
@@ -97,13 +151,25 @@ fn main() {
         .constified_enum_module("ibv_flow_spec_type")
         .constified_enum_module("ibv_counter_description")
         .constified_enum_module("ibv_rereg_mr_err_code")
-        .derive_default(true)
-        .derive_debug(true)
+        .constified_enum_module("ib_uverbs_advise_mr_advice")
+        .constified_enum_module("rdma_cm_event_type")
+        .constified_enum_module("rdma_driver_id")
+        .constified_enum_module("rdma_port_space")
+        .derive_copy(true)
+        .derive_debug(false)
+        .derive_default(false)
+        .generate_comments(false)
+        //.generate_inline_functions(true)
+        //.default_macro_constant_type(bindgen::MacroTypeVariation::Unsigned)
         .prepend_enum_name(false)
+        .rustfmt_bindings(true)
+        .size_t_is_usize(true)
+        .disable_untagged_union()
+        .parse_callbacks(Box::new(BindGenCallback))
         .generate()
         .expect("Unable to generate bindings");
 
     bindings
-        .write_to_file("./src/rdma.rs")
+        .write_to_file("./src/bindings.rs")
         .expect("Could not write bindings");
 }
