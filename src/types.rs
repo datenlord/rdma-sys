@@ -81,24 +81,15 @@ pub struct ibv_mw_bind_info {
     pub mw_access_flags: ::std::os::raw::c_uint,
 }
 
-impl Default for ibv_mw_bind_info {
-    fn default() -> Self {
-        Self {
-            mr: ptr::null::<ibv_mr>() as *mut _,
-            ..Default::default()
-        }
-    }
-}
-
 #[repr(C)]
-#[derive(Clone, Copy, Default)]
+#[derive(Clone, Copy)]
 pub struct rdma_t {
     pub remote_addr: u64,
     pub rkey: u32,
 }
 
 #[repr(C)]
-#[derive(Clone, Copy, Default)]
+#[derive(Clone, Copy)]
 pub struct atomic_t {
     pub remote_addr: u64,
     pub compare_add: u64,
@@ -112,15 +103,6 @@ pub struct ud_t {
     pub ah: *mut ibv_ah,
     pub remote_qpn: u32,
     pub remote_qkey: u32,
-}
-
-impl Default for ud_t {
-    fn default() -> Self {
-        Self {
-            ah: ptr::null::<ud_t>() as *mut _,
-            ..Default::default()
-        }
-    }
 }
 
 #[repr(C)]
@@ -147,15 +129,6 @@ pub struct bind_mw_t {
     pub mw: *mut ibv_mw,
     pub rkey: u32,
     pub bind_info: ibv_mw_bind_info,
-}
-
-impl Default for bind_mw_t {
-    fn default() -> Self {
-        Self {
-            mw: ptr::null::<ibv_mw>() as *mut _,
-            ..Default::default()
-        }
-    }
 }
 
 #[repr(C)]
@@ -186,26 +159,6 @@ pub struct ibv_send_wr {
     pub wr: wr_t,
     pub qp_type: qp_type_t,
     pub bind_mw_tso_union: bind_mw_tso_union_t,
-}
-
-impl Default for ibv_send_wr {
-    fn default() -> Self {
-        Self {
-            opcode: ibv_wr_opcode::IBV_WR_SEND,
-            next: ptr::null::<ibv_send_wr>() as *mut _,
-            sg_list: ptr::null::<ibv_sge>() as *mut _,
-            imm_data_invalidated_rkey_union: imm_data_invalidated_rkey_union_t {
-                imm_data: Default::default(),
-            },
-            wr: wr_t {
-                rdma: Default::default(),
-            },
-            bind_mw_tso_union: bind_mw_tso_union_t {
-                bind_mw: Default::default(),
-            },
-            ..Default::default()
-        }
-    }
 }
 
 // ibv_flow_spec related union and struct types
@@ -278,7 +231,8 @@ pub struct rdma_addr {
     pub addr: addr_union_t,
 }
 
-// rdma_cm_event related union and struct types
+/// rdma_cm_event related union and struct types
+
 #[repr(C)]
 #[derive(Clone, Copy)]
 pub struct ibv_ah_attr {
