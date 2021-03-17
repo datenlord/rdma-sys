@@ -1101,15 +1101,13 @@ pub unsafe fn rdma_post_sendv(
     nsge: c_int,
     flags: c_int,
 ) -> c_int {
-    let mut wr = ibv_send_wr {
-        wr_id: context as u64,
-        next: ptr::null::<ibv_send_wr>() as *mut _,
-        sg_list: sgl,
-        num_sge: nsge,
-        opcode: ibv_wr_opcode::IBV_WR_SEND,
-        send_flags: flags as c_uint,
-        ..Default::default()
-    };
+    let mut wr = std::mem::zeroed::<ibv_send_wr>();
+    wr.wr_id = context as u64;
+    wr.next = ptr::null::<ibv_send_wr>() as *mut _;
+    wr.sg_list = sgl;
+    wr.num_sge = nsge;
+    wr.opcode = ibv_wr_opcode::IBV_WR_SEND;
+    wr.send_flags = flags as c_uint;
     let mut bad = ptr::null::<ibv_send_wr>() as *mut _;
 
     rdma_seterrno(ibv_post_send((*id).qp, &mut wr, &mut bad))
@@ -1125,17 +1123,15 @@ pub unsafe fn rdma_post_readv(
     remote_addr: u64,
     rkey: u32,
 ) -> c_int {
-    let mut wr = ibv_send_wr {
-        wr_id: context as u64,
-        next: ptr::null::<ibv_send_wr>() as *mut _,
-        sg_list: sgl,
-        num_sge: nsge,
-        opcode: ibv_wr_opcode::IBV_WR_RDMA_READ,
-        send_flags: flags as c_uint,
-        wr: wr_t {
-            rdma: rdma_t { remote_addr, rkey },
-        },
-        ..Default::default()
+    let mut wr = std::mem::zeroed::<ibv_send_wr>();
+    wr.wr_id = context as u64;
+    wr.next = ptr::null::<ibv_send_wr>() as *mut _;
+    wr.sg_list = sgl;
+    wr.num_sge = nsge;
+    wr.opcode = ibv_wr_opcode::IBV_WR_RDMA_READ;
+    wr.send_flags = flags as c_uint;
+    wr.wr = wr_t {
+        rdma: rdma_t { remote_addr, rkey },
     };
     let mut bad = ptr::null::<ibv_send_wr>() as *mut _;
 
@@ -1152,17 +1148,15 @@ pub unsafe fn rdma_post_writev(
     remote_addr: u64,
     rkey: u32,
 ) -> c_int {
-    let mut wr = ibv_send_wr {
-        wr_id: context as u64,
-        next: ptr::null::<ibv_send_wr>() as *mut _,
-        sg_list: sgl,
-        num_sge: nsge,
-        opcode: ibv_wr_opcode::IBV_WR_RDMA_WRITE,
-        send_flags: flags as c_uint,
-        wr: wr_t {
-            rdma: rdma_t { remote_addr, rkey },
-        },
-        ..Default::default()
+    let mut wr = std::mem::zeroed::<ibv_send_wr>();
+    wr.wr_id = context as u64;
+    wr.next = ptr::null::<ibv_send_wr>() as *mut _;
+    wr.sg_list = sgl;
+    wr.num_sge = nsge;
+    wr.opcode = ibv_wr_opcode::IBV_WR_RDMA_WRITE;
+    wr.send_flags = flags as c_uint;
+    wr.wr = wr_t {
+        rdma: rdma_t { remote_addr, rkey },
     };
     let mut bad = ptr::null::<ibv_send_wr>() as *mut _;
 
@@ -1279,21 +1273,19 @@ pub unsafe fn rdma_post_ud_send(
         },
     };
 
-    let mut wr = ibv_send_wr {
-        wr_id: context as u64,
-        next: ptr::null::<ibv_send_wr>() as *mut _,
-        sg_list: &mut sge,
-        num_sge: 1,
-        opcode: ibv_wr_opcode::IBV_WR_SEND,
-        send_flags: flags as c_uint,
-        wr: wr_t {
-            ud: ud_t {
-                ah: ah,
-                remote_qpn,
-                remote_qkey: RDMA_UDP_QKEY,
-            },
+    let mut wr = std::mem::zeroed::<ibv_send_wr>();
+    wr.wr_id = context as u64;
+    wr.next = ptr::null::<ibv_send_wr>() as *mut _;
+    wr.sg_list = &mut sge;
+    wr.num_sge = 1;
+    wr.opcode = ibv_wr_opcode::IBV_WR_SEND;
+    wr.send_flags = flags as c_uint;
+    wr.wr = wr_t {
+        ud: ud_t {
+            ah: ah,
+            remote_qpn,
+            remote_qkey: RDMA_UDP_QKEY,
         },
-        ..Default::default()
     };
     let mut bad = ptr::null::<ibv_send_wr>() as *mut _;
 
