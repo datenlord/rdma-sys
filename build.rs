@@ -10,7 +10,13 @@ struct BindGenCallback;
 
 impl ParseCallbacks for BindGenCallback {
     fn item_name(&self, original_item_name: &str) -> Option<String> {
-        if original_item_name.starts_with("pthread_") {
+        if original_item_name == "in6_addr" {
+            Some(
+                original_item_name
+                    .replace("in6_addr", "libc::in6_addr")
+                    .to_string(),
+            )
+        } else if original_item_name.starts_with("pthread_") {
             Some(
                 original_item_name
                     .replace("pthread_", "libc::pthread_")
@@ -22,7 +28,7 @@ impl ParseCallbacks for BindGenCallback {
                     .replace("sockaddr", "libc::sockaddr")
                     .to_string(),
             )
-        } else if original_item_name.starts_with("timespec") {
+        } else if original_item_name == "timespec" {
             Some(
                 original_item_name
                     .replace("timespec", "libc::timespec")
@@ -72,21 +78,23 @@ fn main() {
         .whitelist_type("ib_uverbs_access_flags")
         //.whitelist_type("verbs_devices_ops")
         //.whitelist_var("verbs_provider_.*")
+        .blacklist_type("in6_addr")
         .blacklist_type("pthread_.*")
         .blacklist_type("sockaddr.*")
         .blacklist_type("timespec")
-        .blacklist_type("ibv_gid")
+        .blacklist_type("ibv_ah_attr")
         .blacklist_type("ibv_async_event")
-        .blacklist_type("ibv_wc")
+        .blacklist_type("ibv_flow_spec")
+        .blacklist_type("ibv_gid")
         .blacklist_type("ibv_global_route")
         .blacklist_type("ibv_mw_bind_info")
+        .blacklist_type("ibv_ops_wr")
         .blacklist_type("ibv_send_wr")
-        .blacklist_type("ibv_flow_spec")
-        .blacklist_type("rdma_ib_addr")
+        .blacklist_type("ibv_wc")
         .blacklist_type("rdma_addr")
-        .blacklist_type("ibv_ah_attr")
-        .blacklist_type("rdma_ud_param")
         .blacklist_type("rdma_cm_event")
+        .blacklist_type("rdma_ib_addr")
+        .blacklist_type("rdma_ud_param")
         // Following ENUM will used with bitwise-or
         // including flags, mask, caps, bits, fields, size
         .bitfield_enum("ibv_device_cap_flags")

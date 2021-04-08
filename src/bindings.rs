@@ -6621,15 +6621,6 @@ impl ::std::ops::BitAndAssign for ibv_ops_flags {
 pub struct ibv_ops_flags(pub ::std::os::raw::c_uint);
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct ibv_ops_wr {
-    pub wr_id: u64,
-    pub next: *mut ibv_ops_wr,
-    pub opcode: ibv_ops_wr_opcode::Type,
-    pub flags: ::std::os::raw::c_int,
-    pub tm: ibv_ops_wr__bindgen_ty_1,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
 pub struct ibv_ops_wr__bindgen_ty_1 {
     pub unexpected_cnt: u32,
     pub handle: u32,
@@ -6770,69 +6761,6 @@ fn bindgen_test_layout_ibv_ops_wr__bindgen_ty_1() {
             stringify!(ibv_ops_wr__bindgen_ty_1),
             "::",
             stringify!(add)
-        )
-    );
-}
-#[test]
-fn bindgen_test_layout_ibv_ops_wr() {
-    assert_eq!(
-        ::std::mem::size_of::<ibv_ops_wr>(),
-        72usize,
-        concat!("Size of: ", stringify!(ibv_ops_wr))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<ibv_ops_wr>(),
-        8usize,
-        concat!("Alignment of ", stringify!(ibv_ops_wr))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<ibv_ops_wr>())).wr_id as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(ibv_ops_wr),
-            "::",
-            stringify!(wr_id)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<ibv_ops_wr>())).next as *const _ as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(ibv_ops_wr),
-            "::",
-            stringify!(next)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<ibv_ops_wr>())).opcode as *const _ as usize },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(ibv_ops_wr),
-            "::",
-            stringify!(opcode)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<ibv_ops_wr>())).flags as *const _ as usize },
-        20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(ibv_ops_wr),
-            "::",
-            stringify!(flags)
-        )
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<ibv_ops_wr>())).tm as *const _ as usize },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(ibv_ops_wr),
-            "::",
-            stringify!(tm)
         )
     );
 }
@@ -12413,11 +12341,6 @@ fn bindgen_test_layout_in_addr() {
 pub type in_port_t = u16;
 #[repr(C)]
 #[derive(Copy, Clone)]
-pub struct in6_addr {
-    pub __in6_u: in6_addr__bindgen_ty_1,
-}
-#[repr(C)]
-#[derive(Copy, Clone)]
 pub struct in6_addr__bindgen_ty_1 {
     pub __u6_addr8: __BindgenUnionField<[u8; 16usize]>,
     pub __u6_addr16: __BindgenUnionField<[u16; 8usize]>,
@@ -12470,29 +12393,6 @@ fn bindgen_test_layout_in6_addr__bindgen_ty_1() {
             stringify!(in6_addr__bindgen_ty_1),
             "::",
             stringify!(__u6_addr32)
-        )
-    );
-}
-#[test]
-fn bindgen_test_layout_in6_addr() {
-    assert_eq!(
-        ::std::mem::size_of::<in6_addr>(),
-        16usize,
-        concat!("Size of: ", stringify!(in6_addr))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<in6_addr>(),
-        4usize,
-        concat!("Alignment of ", stringify!(in6_addr))
-    );
-    assert_eq!(
-        unsafe { &(*(::std::ptr::null::<in6_addr>())).__in6_u as *const _ as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(in6_addr),
-            "::",
-            stringify!(__in6_u)
         )
     );
 }
