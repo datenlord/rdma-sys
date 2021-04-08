@@ -288,7 +288,11 @@ macro_rules! verbs_get_ctx_op {
     };
 }
 
-//
+// TODO: note that ibv_query_port, ibv_get_device_list, ibv_reg_mr, and
+// ibv_reg_mr_iova are redefined using ___ibv_query_port,
+// __ibv_get_device_list, __ibv_reg_mr, and __ibv_reg_mr_iova in C, which
+// should be handled properly in Rust.
+
 // When statically linking the user can set RDMA_STATIC_PROVIDERS to a comma
 // separated list of provider names to include in the static link, and this
 // machinery will cause those providers to be included statically.
@@ -447,9 +451,9 @@ pub unsafe fn __ibv_reg_mr(
 }
 // TODO: handle C macro defined function
 // #define ibv_reg_mr(pd, addr, length, access) \
-// 	__ibv_reg_mr(pd, addr, length, access,      \
-// 		     __builtin_constant_p(              \
-// 			     ((access) & IBV_ACCESS_OPTIONAL_RANGE) == 0))
+//     __ibv_reg_mr(pd, addr, length, access,      \
+//              __builtin_constant_p(              \
+//                  ((access) & IBV_ACCESS_OPTIONAL_RANGE) == 0))
 
 // use new ibv_reg_mr version only if access flags that require it are used
 #[inline]
@@ -473,9 +477,9 @@ pub unsafe fn __ibv_reg_mr_iova(
 }
 // TODO: handle C macro defined function
 // #define ibv_reg_mr_iova(pd, addr, length, iova, access)                        \
-// 	__ibv_reg_mr_iova(pd, addr, length, iova, access,                      \
-// 			  __builtin_constant_p(                                \
-// 				  ((access) & IBV_ACCESS_OPTIONAL_RANGE) == 0))
+//     __ibv_reg_mr_iova(pd, addr, length, iova, access,                      \
+//               __builtin_constant_p(                                \
+//                   ((access) & IBV_ACCESS_OPTIONAL_RANGE) == 0))
 
 // ibv_mw related inline functions
 #[inline]
@@ -1010,7 +1014,18 @@ pub unsafe fn ibv_read_counters(
 
 /// Inline functions from <rdma/rdma_cma.h>
 
-const RDMA_UDP_QKEY: u32 = 0x01234567;
+pub const RDMA_IB_IP_PS_MASK: u64 = 0xFFFFFFFFFFFF0000;
+pub const RDMA_IB_IP_PORT_MASK: u64 = 0x000000000000FFFF;
+pub const RDMA_IB_IP_PS_TCP: u64 = 0x0000000001060000;
+pub const RDMA_IB_IP_PS_UDP: u64 = 0x0000000001110000;
+pub const RDMA_IB_PS_IB: u64 = 0x00000000013F0000;
+
+pub const RDMA_UDP_QKEY: u32 = 0x01234567;
+
+pub const RAI_PASSIVE: u32 = 0x00000001;
+pub const RAI_NUMERICHOST: u32 = 0x00000002;
+pub const RAI_NOROUTE: u32 = 0x00000004;
+pub const RAI_FAMILY: u32 = 0x00000008;
 
 #[inline]
 pub unsafe fn rdma_get_local_addr(id: &rdma_cm_id) -> &libc::sockaddr {

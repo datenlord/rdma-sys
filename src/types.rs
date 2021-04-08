@@ -161,6 +161,33 @@ pub struct ibv_send_wr {
     pub bind_mw_tso_union: bind_mw_tso_union_t,
 }
 
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct add_t {
+    pub recv_wr_id: u64,
+    pub sg_list: *mut ibv_sge,
+    pub num_sge: c_int,
+    pub tag: u64,
+    pub mask: u64,
+}
+
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub struct tm_t {
+    pub unexpected_cnt: u32,
+    pub handle: u32,
+    pub add: add_t,
+}
+
+#[repr(C)]
+pub struct ibv_ops_wr {
+	wr_id: u64,
+	next: *mut Self,
+	opcode: ibv_ops_wr_opcode::Type,
+	flags: c_int,
+	tm: tm_t,
+}
+
 // ibv_flow_spec related union and struct types
 #[repr(C)]
 #[derive(Clone, Copy)]
