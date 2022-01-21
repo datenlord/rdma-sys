@@ -2,10 +2,12 @@ name: RDMA-SYS-CI
 on:
   pull_request:
     branches: [master]
+  push:
+    branches: [master]
   schedule: [cron: "0 */24 * * *"]
 
 env:
-  CI_RUST_TOOLCHAIN: 1.50.0
+  CI_RUST_TOOLCHAIN: 1.56.0
 
 jobs:
   build:
