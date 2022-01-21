@@ -500,7 +500,7 @@ pub unsafe fn ibv_dealloc_mw(mw: *mut ibv_mw) -> c_int {
 // ibv_inc_rkey - Increase the 8 lsb in the given rkey
 #[inline]
 pub unsafe fn ibv_inc_rkey(rkey: u32) -> u32 {
-    let mask: __uint32_t = 0x000000ff;
+    let mask: u32 = 0x000000ff;
     let newtag = ((rkey + 1) & mask) as u8;
 
     (rkey & !mask) | (newtag as u32)
