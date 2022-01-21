@@ -3,6 +3,8 @@ on:
   pull_request:
     branches: [master]
   schedule: [cron: "0 */24 * * *"]
+  workflow_dispatch:
+    branches: [master]
 
 env:
   CI_RUST_TOOLCHAIN: 1.50.0
