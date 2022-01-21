@@ -12,5 +12,5 @@ memoffset = "0.6"
 # intrusive-collections = "0.9"
 
 [build-dependencies]
-bindgen = "0.57"
+bindgen = "0.59.2"
 pkg-config = "0.3"
