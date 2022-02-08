@@ -2,7 +2,7 @@ use std::mem;
 use std::os::raw::{c_int, c_uint, c_void};
 use std::ptr;
 
-include!("./bindings.rs");
+include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 include!("./types.rs");
 
 /// Inline functions from <infiniband/verbs.h>
