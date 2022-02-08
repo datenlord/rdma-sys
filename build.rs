@@ -1,5 +1,6 @@
 use bindgen::callbacks::ParseCallbacks;
-
+use std::env;
+use std::path::Path;
 // TODO: check libclang-dev version, since Rust bindgen depends on it
 // const LIB_CLANG_DEV_VERSION: &str = "3.9";
 const LIB_IBVERBS_DEV_VERSION: &str = "1.8.28";
@@ -177,7 +178,10 @@ fn main() {
         .generate()
         .expect("Unable to generate bindings");
 
+    let out_dir = env::var_os("OUT_DIR").unwrap();
+    let dest_path = Path::new(&out_dir).join("bindings.rs");
+
     bindings
-        .write_to_file("./src/bindings.rs")
+        .write_to_file(dest_path)
         .expect("Could not write bindings");
 }
