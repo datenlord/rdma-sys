@@ -12,29 +12,13 @@ struct BindGenCallback;
 impl ParseCallbacks for BindGenCallback {
     fn item_name(&self, original_item_name: &str) -> Option<String> {
         if original_item_name == "in6_addr" {
-            Some(
-                original_item_name
-                    .replace("in6_addr", "libc::in6_addr")
-                    .to_string(),
-            )
+            Some(original_item_name.replace("in6_addr", "libc::in6_addr"))
         } else if original_item_name.starts_with("pthread_") {
-            Some(
-                original_item_name
-                    .replace("pthread_", "libc::pthread_")
-                    .to_string(),
-            )
+            Some(original_item_name.replace("pthread_", "libc::pthread_"))
         } else if original_item_name.starts_with("sockaddr") {
-            Some(
-                original_item_name
-                    .replace("sockaddr", "libc::sockaddr")
-                    .to_string(),
-            )
+            Some(original_item_name.replace("sockaddr", "libc::sockaddr"))
         } else if original_item_name == "timespec" {
-            Some(
-                original_item_name
-                    .replace("timespec", "libc::timespec")
-                    .to_string(),
-            )
+            Some(original_item_name.replace("timespec", "libc::timespec"))
         } else {
             None
         }
@@ -53,19 +37,13 @@ fn main() {
         .atleast_version(LIB_IBVERBS_DEV_VERSION)
         .statik(true)
         .probe("libibverbs")
-        .expect(&format!(
-            "please install libibverbs-dev {}",
-            LIB_IBVERBS_DEV_VERSION
-        ));
+        .unwrap_or_else(|_| panic!("please install libibverbs-dev {}", LIB_IBVERBS_DEV_VERSION));
 
     pkg_config::Config::new()
         .atleast_version(LIB_RDMACM_DEV_VERSION)
         .statik(true)
         .probe("librdmacm")
-        .expect(&format!(
-            "please install librdmacm-dev {}",
-            LIB_RDMACM_DEV_VERSION,
-        ));
+        .unwrap_or_else(|_| panic!("please install librdmacm-dev {}", LIB_RDMACM_DEV_VERSION));
 
     let bindings = bindgen::Builder::default()
         .header("/usr/include/infiniband/verbs.h")

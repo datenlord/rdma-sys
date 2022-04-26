@@ -1,12 +1,7 @@
 #![deny(warnings)]
 #![allow(non_snake_case, non_camel_case_types, non_upper_case_globals)]
 #![allow(deref_nullptr)] // TODO(fxbug.dev/74605): Remove once bindgen is fixed.
-#![allow(
-    clippy::missing_safety_doc,
-    clippy::needless_return,
-    clippy::too_many_arguments,
-    clippy::cmp_null
-)]
+#![allow(clippy::missing_safety_doc, clippy::too_many_arguments)]
 
 mod bindings {
     use crate::*;

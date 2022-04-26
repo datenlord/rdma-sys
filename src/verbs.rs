@@ -935,7 +935,7 @@ pub unsafe fn ibv_post_send(
     wr: *mut ibv_send_wr,
     bad_wr: *mut *mut ibv_send_wr,
 ) -> c_int {
-    return (*(*qp).context).ops.post_send.unwrap()(qp, wr, bad_wr);
+    (*(*qp).context).ops.post_send.unwrap()(qp, wr, bad_wr)
 }
 
 #[inline]
@@ -944,7 +944,7 @@ pub unsafe fn ibv_post_recv(
     wr: *mut ibv_recv_wr,
     bad_wr: *mut *mut ibv_recv_wr,
 ) -> c_int {
-    return (*(*qp).context).ops.post_recv.unwrap()(qp, wr, bad_wr);
+    (*(*qp).context).ops.post_recv.unwrap()(qp, wr, bad_wr)
 }
 
 #[inline]
@@ -1148,7 +1148,7 @@ pub unsafe fn rdma_post_readv(
     };
     let mut bad = ptr::null::<ibv_send_wr>() as *mut _;
 
-    return rdma_seterrno(ibv_post_send((*id).qp, &mut wr, &mut bad));
+    rdma_seterrno(ibv_post_send((*id).qp, &mut wr, &mut bad))
 }
 
 #[inline]
@@ -1211,11 +1211,7 @@ pub unsafe fn rdma_post_send(
     let mut sge = ibv_sge {
         addr: addr as u64,
         length: length as u32,
-        lkey: if mr as *const _ != ptr::null::<ibv_mr>() {
-            (*mr).lkey
-        } else {
-            0
-        },
+        lkey: if !mr.is_null() { (*mr).lkey } else { 0 },
     };
     let nsge = 1;
     rdma_post_sendv(id, context, &mut sge, nsge, flags)
@@ -1255,11 +1251,7 @@ pub unsafe fn rdma_post_write(
     let mut sge = ibv_sge {
         addr: addr as u64,
         length: length as u32,
-        lkey: if mr as *const _ != ptr::null::<ibv_mr>() {
-            (*mr).lkey
-        } else {
-            0
-        },
+        lkey: if !mr.is_null() { (*mr).lkey } else { 0 },
     };
     let nsge = 1;
     rdma_post_writev(id, context, &mut sge, nsge, flags, remote_addr, rkey)
@@ -1279,11 +1271,7 @@ pub unsafe fn rdma_post_ud_send(
     let mut sge = ibv_sge {
         addr: addr as u64,
         length: length as u32,
-        lkey: if mr as *const _ != ptr::null::<ibv_mr>() {
-            (*mr).lkey
-        } else {
-            0
-        },
+        lkey: if !mr.is_null() { (*mr).lkey } else { 0 },
     };
 
     let mut wr = std::mem::zeroed::<ibv_send_wr>();
@@ -1295,7 +1283,7 @@ pub unsafe fn rdma_post_ud_send(
     wr.send_flags = flags as c_uint;
     wr.wr = wr_t {
         ud: ud_t {
-            ah: ah,
+            ah,
             remote_qpn,
             remote_qkey: RDMA_UDP_QKEY,
         },
