@@ -1,9 +1,7 @@
-use std::mem;
-use std::os::raw::{c_int, c_uint, c_void};
-use std::ptr;
+use crate::*;
 
-include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
-include!("./types.rs");
+use std::mem;
+use std::ptr;
 
 /// Inline functions from <infiniband/verbs.h>
 

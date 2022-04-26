@@ -1,6 +1,7 @@
+use crate::*;
+
 /// This file defines the types directly or indirectly involving union,
 /// in that BindGen cannot handle union very well, so mannually define them.
-
 
 /// Struct types involve union in <infiniband/verbs.h>
 
@@ -181,11 +182,11 @@ pub struct tm_t {
 
 #[repr(C)]
 pub struct ibv_ops_wr {
-	wr_id: u64,
-	next: *mut Self,
-	opcode: ibv_ops_wr_opcode::Type,
-	flags: c_int,
-	tm: tm_t,
+    wr_id: u64,
+    next: *mut Self,
+    opcode: ibv_ops_wr_opcode::Type,
+    flags: c_int,
+    tm: tm_t,
 }
 
 // ibv_flow_spec related union and struct types
