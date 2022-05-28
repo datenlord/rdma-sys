@@ -1,10 +1,6 @@
 use bindgen::callbacks::ParseCallbacks;
 use std::env;
 use std::path::Path;
-// TODO: check libclang-dev version, since Rust bindgen depends on it
-// const LIB_CLANG_DEV_VERSION: &str = "3.9";
-const LIB_IBVERBS_DEV_VERSION: &str = "1.8.28";
-const LIB_RDMACM_DEV_VERSION: &str = "1.2.28";
 
 #[derive(Debug)]
 struct BindGenCallback;
@@ -25,30 +21,50 @@ impl ParseCallbacks for BindGenCallback {
     }
 }
 
+fn link_rdma_core(lib_name: &str, pkg_name: &str, version: &str, include_paths: &mut Vec<String>) {
+    let result: _ = pkg_config::Config::new()
+        .atleast_version(version)
+        .statik(false)
+        .probe(lib_name);
+
+    let lib = result.unwrap_or_else(|_| panic!("please install {pkg_name} {version})"));
+    println!("found {pkg_name} {}", lib.version);
+
+    for path in lib.include_paths {
+        let path = path.to_str().expect("non-utf8 path");
+        include_paths.push(path.to_owned());
+    }
+}
+
 fn main() {
-    // assert!(pkg_config::find_library("libclang-dev").is_ok(), "libclang-dev NOT found");
-    // pkg_config::Config::new()
-    //     .atleast_version(LIB_CLANG_DEV_VERSION)
-    //     //.statik(true)
-    //     .probe("libclang")
-    //     .expect(&format!("please install libclang-dev {}", LIB_CLANG_DEV_VERSION));
+    let mut include_paths: Vec<String> = Vec::new();
 
-    pkg_config::Config::new()
-        .atleast_version(LIB_IBVERBS_DEV_VERSION)
-        .statik(true)
-        .probe("libibverbs")
-        .unwrap_or_else(|_| panic!("please install libibverbs-dev {}", LIB_IBVERBS_DEV_VERSION));
+    {
+        let lib_name = "libibverbs";
+        let pkg_name = "libibverbs-dev";
+        let version = "1.8.28";
+        link_rdma_core(lib_name, pkg_name, version, &mut include_paths);
+    }
 
-    pkg_config::Config::new()
-        .atleast_version(LIB_RDMACM_DEV_VERSION)
-        .statik(true)
-        .probe("librdmacm")
-        .unwrap_or_else(|_| panic!("please install librdmacm-dev {}", LIB_RDMACM_DEV_VERSION));
+    {
+        let lib_name = "librdmacm";
+        let pkg_name = "librdmacm-dev";
+        let version = "1.2.28";
+        link_rdma_core(lib_name, pkg_name, version, &mut include_paths);
+    }
+
+    {
+        include_paths.sort_unstable();
+        include_paths.dedup_by(|x, first| x == first);
+        include_paths.push("/usr/include".into());
+        println!("include paths: {:?}", include_paths);
+    }
+
+    let include_args = include_paths.iter().map(|p| format!("-I{}", p));
 
     let bindings = bindgen::Builder::default()
-        .header("/usr/include/infiniband/verbs.h")
-        .header("/usr/include/rdma/rdma_cma.h")
-        .header("/usr/include/rdma/rdma_verbs.h")
+        .clang_args(include_args)
+        .header("src/bindings.h")
         .allowlist_function("ibv_.*")
         .allowlist_type("ibv_.*")
         .allowlist_function("rdma_.*")
