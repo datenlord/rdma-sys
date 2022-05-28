@@ -1,25 +1,5 @@
-use bindgen::callbacks::ParseCallbacks;
 use std::env;
 use std::path::Path;
-
-#[derive(Debug)]
-struct BindGenCallback;
-
-impl ParseCallbacks for BindGenCallback {
-    fn item_name(&self, original_item_name: &str) -> Option<String> {
-        if original_item_name == "in6_addr" {
-            Some(original_item_name.replace("in6_addr", "libc::in6_addr"))
-        } else if original_item_name.starts_with("pthread_") {
-            Some(original_item_name.replace("pthread_", "libc::pthread_"))
-        } else if original_item_name.starts_with("sockaddr") {
-            Some(original_item_name.replace("sockaddr", "libc::sockaddr"))
-        } else if original_item_name == "timespec" {
-            Some(original_item_name.replace("timespec", "libc::timespec"))
-        } else {
-            None
-        }
-    }
-}
 
 fn link_rdma_core(lib_name: &str, pkg_name: &str, version: &str, include_paths: &mut Vec<String>) {
     let result: _ = pkg_config::Config::new()
@@ -168,7 +148,6 @@ fn main() {
         .rustfmt_bindings(true)
         .size_t_is_usize(true)
         .disable_untagged_union()
-        .parse_callbacks(Box::new(BindGenCallback))
         .generate()
         .expect("Unable to generate bindings");
 
