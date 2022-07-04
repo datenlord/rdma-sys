@@ -138,6 +138,9 @@ fn main() {
         .constified_enum_module("rdma_cm_event_type")
         .constified_enum_module("rdma_driver_id")
         .constified_enum_module("rdma_port_space")
+        // unions with non-`Copy` fields other than `ManuallyDrop<T>` are unstable
+        // for example: `pub eth: ibv_flow_spec_eth`
+        // note: see issue #55149 <https://github.com/rust-lang/rust/issues/55149> for more information
         .derive_copy(true)
         .derive_debug(false)
         .derive_default(false)
