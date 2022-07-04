@@ -19,10 +19,15 @@ jobs:
         run: |
           # Install libibverbs-dev as dependency automatically
           sudo apt-get install -y librdmacm-dev
-      - uses: actions-rs/cargo@v1
+      - uses: actions-rs/toolchain@v1
         with:
-          command: test
-          args: --all
+          profile: minimal
+          toolchain: ${{ env.CI_RUST_TOOLCHAIN }}
+          override: true
+      - name: Test
+        run: |
+          ./scripts/setup.sh
+          ./scripts/run.sh
       - name: Setup tmate session
         if: ${{ failure() }}
         uses: mxschmitt/action-tmate@v3
