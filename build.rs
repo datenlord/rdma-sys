@@ -54,7 +54,7 @@ fn main() {
         //.allowlist_type("verbs_devices_ops")
         //.allowlist_var("verbs_provider_.*")
         .blocklist_type("in6_addr")
-        .blocklist_type("pthread_.*")
+        .opaque_type("pthread_.*")
         .blocklist_type("sockaddr.*")
         .blocklist_type("timespec")
         .blocklist_type("ibv_ah_attr")
