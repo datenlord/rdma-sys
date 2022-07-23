@@ -8,7 +8,7 @@ pub mod ibv_opcode {
             }
         };
     }
-    
+
     /* transport types -- just used to define real constants */
     pub const IBV_OPCODE_RC: Type = 0x00;
     pub const IBV_OPCODE_UC: Type = 0x20;
