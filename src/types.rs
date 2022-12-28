@@ -33,7 +33,7 @@ pub union ibv_async_event_element_t {
 #[repr(C)]
 pub struct ibv_async_event {
     pub element: ibv_async_event_element_t,
-    pub event_type: ibv_event_type::Type,
+    pub event_type: ibv_event_type,
 }
 
 // ibv_wc related union and struct types
