@@ -7,8 +7,10 @@ use libc::*;
 
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 
+mod opcode;
 mod types;
 mod verbs;
 
+pub use self::opcode::*;
 pub use self::types::*;
 pub use self::verbs::*;

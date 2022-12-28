@@ -11,6 +11,7 @@ repository = "https://github.com/datenlord/rdma-sys"
 [dependencies]
 libc = "0.2"
 memoffset = "0.6"
+paste = "1.0"
 # intrusive-collections = "0.9"
 
 [build-dependencies]
