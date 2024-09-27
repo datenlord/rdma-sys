@@ -1,3 +1,4 @@
+use bindgen::Formatter;
 use std::env;
 use std::path::Path;
 
@@ -148,7 +149,7 @@ fn main() {
         //.generate_inline_functions(true)
         //.default_macro_constant_type(bindgen::MacroTypeVariation::Unsigned)
         .prepend_enum_name(false)
-        .rustfmt_bindings(true)
+        .formatter(Formatter::Rustfmt)
         .size_t_is_usize(true)
         .disable_untagged_union()
         .generate()
